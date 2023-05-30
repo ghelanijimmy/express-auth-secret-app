@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { User } from './db/user';
@@ -37,9 +40,9 @@ app.post('/register', async (req: BodyRequest<UserWithEmailAndPassword>, res: Re
 
 app.post('/login', async (req: BodyRequest<UserWithEmailAndPassword>, res: Response) => {
   const { username, password } = req.body;
-  User.findOne({ email: username, password })
+  User.findOne({ email: username })
     .then((user) => {
-      if (user) {
+      if (user && user.password === password) {
         res.render('secrets');
       } else {
         res.redirect('/login');
