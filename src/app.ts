@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import { findUser, saveUser } from './db/user';
 import { BodyRequest } from './types/RequestResponse';
 import { UserWithEmailAndPassword } from './types/user';
+
 const app = express();
 
 app.use(express.static('public'));
@@ -33,7 +34,7 @@ app.post('/register', async (req: BodyRequest<UserWithEmailAndPassword>, res: Re
 
 app.post('/login', async (req: BodyRequest<UserWithEmailAndPassword>, res: Response) => {
   const { username, password } = req.body;
-  await findUser({ email: username, password }).then((user) => {
+  findUser({ email: username, password }).then((user) => {
     if (user) {
       res.render('secrets');
     } else {
