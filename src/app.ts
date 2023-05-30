@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import { User } from './db/user';
 import { BodyRequest } from './types/RequestResponse';
 import { UserWithEmailAndPassword } from './types/user';
+import md5 from 'md5';
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.get('/register', (req: Request, res: Response) => {
 
 app.post('/register', async (req: BodyRequest<UserWithEmailAndPassword>, res: Response) => {
   const { username, password } = req.body;
-  const user = new User({ email: username, password });
+  const user = new User({ email: username, password: md5(password) });
   await user
     .save()
     .then(() => {
@@ -42,7 +43,7 @@ app.post('/login', async (req: BodyRequest<UserWithEmailAndPassword>, res: Respo
   const { username, password } = req.body;
   User.findOne({ email: username })
     .then((user) => {
-      if (user && user.password === password) {
+      if (user && user.password === md5(password)) {
         res.render('secrets');
       } else {
         res.redirect('/login');
