@@ -3,10 +3,9 @@ dotenv.config();
 
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import { User } from './db/user';
+import { findUser, saveUser } from './db/user';
 import { BodyRequest } from './types/RequestResponse';
 import { UserWithEmailAndPassword } from './types/user';
-import md5 from 'md5';
 
 const app = express();
 
@@ -28,30 +27,20 @@ app.get('/register', (req: Request, res: Response) => {
 
 app.post('/register', async (req: BodyRequest<UserWithEmailAndPassword>, res: Response) => {
   const { username, password } = req.body;
-  const user = new User({ email: username, password: md5(password) });
-  await user
-    .save()
-    .then(() => {
-      res.render('secrets');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  await saveUser({ email: username, password }).then(() => {
+    res.render('secrets');
+  });
 });
 
 app.post('/login', async (req: BodyRequest<UserWithEmailAndPassword>, res: Response) => {
   const { username, password } = req.body;
-  User.findOne({ email: username })
-    .then((user) => {
-      if (user && user.password === md5(password)) {
-        res.render('secrets');
-      } else {
-        res.redirect('/login');
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  findUser({ email: username, password }).then((user) => {
+    if (user) {
+      res.render('secrets');
+    } else {
+      res.redirect('/login');
+    }
+  });
 });
 
 app.listen(3000, () => {
