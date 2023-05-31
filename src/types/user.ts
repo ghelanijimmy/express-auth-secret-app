@@ -1,4 +1,4 @@
-export type UserWithEmailAndPassword = {
+export type RequestUser = {
   username: string;
   password: string;
 };
