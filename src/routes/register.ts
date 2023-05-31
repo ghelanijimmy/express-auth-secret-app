@@ -1,5 +1,4 @@
-import express, { Response } from 'express';
-import { BodyRequest } from '../types/RequestResponse';
+import express from 'express';
 import { RequestUser } from '../types/user';
 import { saveUser } from '../db/DBUser';
 
@@ -8,8 +7,8 @@ registerRouter.get('/', (req, res) => {
   res.render('register');
 });
 
-registerRouter.post('/', async (req: BodyRequest<RequestUser>, res: Response) => {
-  saveUser(req.body)
+registerRouter.post('/', async (req, res) => {
+  saveUser(req.body as RequestUser)
     .then((authResponse) => {
       authResponse(req, res, () => {
         res.redirect('/secrets');

@@ -1,12 +1,15 @@
 import express from 'express';
+import { User } from '../db/DBUser';
 
 const secretsRouter = express.Router();
 
-secretsRouter.get('/', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.render('secrets');
+secretsRouter.get('/', async (req, res) => {
+  const secrets = await User.find({ secret: { $ne: null } });
+  console.log(secrets);
+  if (!secrets) {
+    res.render('secrets', { usersWithSecrets: [] });
   } else {
-    res.redirect('/login');
+    res.render('secrets', { usersWithSecrets: secrets });
   }
 });
 

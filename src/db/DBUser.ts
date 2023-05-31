@@ -1,14 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
 import * as mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import passport from 'passport';
 import { Schema, Document } from 'mongoose';
 import { RequestUser } from '../types/user';
+import { NextFunction } from 'express';
 
 export interface DBUser extends Document {
   email: string;
   password: string;
   googleId: string;
+  secret: string;
+  id: string;
 }
 
 mongoose.connect('mongodb://127.0.0.1:27017/userDB').then(() => console.log('Connected to MongoDB'));
@@ -17,6 +19,7 @@ const userSchema = new Schema<DBUser>({
   email: String,
   password: String,
   googleId: String,
+  secret: String,
 });
 
 userSchema.plugin(passportLocalMongoose, {
@@ -26,8 +29,8 @@ userSchema.plugin(passportLocalMongoose, {
 
 export const User = mongoose.model<DBUser>('User', userSchema);
 
-export const saveUser = async (user: { username: string; password: string }) => {
-  return new Promise<(req: Request, res: Response, next: NextFunction) => void>((resolve, reject) => {
+export const saveUser = async (user: RequestUser) => {
+  return new Promise<(req: Express.Request, res: Express.Response, next: NextFunction) => void>((resolve, reject) => {
     User.register(new User({ email: user.username, password: user.password }), user.password, (err) => {
       if (err) {
         reject(err);
@@ -44,7 +47,7 @@ export const saveUser = async (user: { username: string; password: string }) => 
 export const findUser = async (
   user: RequestUser,
   login: (user: Express.User, dont: (err: unknown) => void) => void,
-): Promise<(req: Request, res: Response, next: NextFunction) => void> => {
+): Promise<(req: Express.Request, res: Express.Response, next: NextFunction) => void> => {
   const dbUser = new User({
     email: user.username,
     password: user.password,
