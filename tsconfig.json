@@ -10,12 +10,11 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "./**/*.d.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"],
   "lib": ["ES5", "ES6", "DOM"],
   "typeRoots":  [
     "./node_modules/@types",
-    "./node_modules/@types/node",
     "./src/typings"
   ],
   "ts-node": {

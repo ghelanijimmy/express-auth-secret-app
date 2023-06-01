@@ -1,19 +1,22 @@
-import express, { Response } from 'express';
-import { BodyRequest } from '../types/RequestResponse';
+import express from 'express';
 import { RequestUser } from '../types/user';
 import { findUser } from '../db/DBUser';
 
 const loginRouter = express.Router();
 
 loginRouter.get('/', (req, res) => {
-  res.render('login');
+  if (req.isAuthenticated()) {
+    res.redirect('/submit');
+  } else {
+    res.render('login');
+  }
 });
 
-loginRouter.post('/', (req: BodyRequest<RequestUser>, res: Response) => {
-  findUser(req.body, req.login)
+loginRouter.post('/', (req, res) => {
+  findUser(req.body as RequestUser, req.login)
     .then((authResponse) => {
       authResponse(req, res, () => {
-        res.redirect('/secrets');
+        res.redirect('/submit');
       });
     })
     .catch((err) => {

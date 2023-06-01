@@ -13,6 +13,7 @@ import LocalStrategy from 'passport-local';
 import { findOrCreateUser, User } from './db/DBUser';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import authRouter from './routes/auth';
+import submitRouter from './routes/submit';
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use('/register', registerRouter);
 app.use('/secrets', secretsRouter);
 app.use('/logout', logoutRouter);
 app.use('/auth', authRouter);
+app.use('/submit', submitRouter);
 
 app.get('/', async (req: Request, res: Response) => {
   res.render('home');
